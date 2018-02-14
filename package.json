@@ -1,16 +1,16 @@
 {
-	"name": "@veams/base",
+	"name": "@veams/component",
 	"version": "1.0.0",
-	"description": "Base Class for Components and Services",
+	"description": "Component Class for Components in Veams for static page apps",
 	"main": "lib/index.js",
 	"scripts": {
 		"build": "tsc --project tsconfig.json --outDir lib --declarationDir lib --declaration --module commonjs",
-		"dev": "tsc --project tsconfig.json --watch --outDir lib --declarationDir lib --declaration --module commonjs",
+		"start": "tsc --project tsconfig.json --watch --outDir lib --declarationDir lib --declaration --module commonjs",
 		"prepublish": "npm run build"
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/Veams/base.git"
+		"url": "git+https://github.com/Veams/component.git"
 	},
 	"keywords": [
 		"Veams"
@@ -18,9 +18,9 @@
 	"author": "Sebastian Fitzner",
 	"license": "MIT",
 	"bugs": {
-		"url": "https://github.com/Veams/base/issues"
+		"url": "https://github.com/Veams/component/issues"
 	},
-	"homepage": "https://github.com/Veams/base#readme",
+	"homepage": "https://github.com/Veams/component#readme",
 	"devDependencies": {
 		"@types/jquery": "^3.3.0",
 		"typescript": "^2.7.1"
