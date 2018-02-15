@@ -25,7 +25,6 @@ import { Collection } from './helpers/collection';
 
 export interface ComponentConfig extends BaseConfig {
 	appInstance?: any; // @TODO: Check type
-	el: HTMLElement // @TODO: Why?
 }
 
 export interface Subscriber {

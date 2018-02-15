@@ -1,8 +1,9 @@
 {
 	"name": "@veams/component",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Component Class for Components in Veams for static page apps",
-	"main": "lib/index.js",
+	"main": "./lib/index.js",
+	"types": "./lib/index.d.ts",
 	"scripts": {
 		"build": "tsc --project tsconfig.json --outDir lib --declarationDir lib --declaration --module commonjs",
 		"start": "tsc --project tsconfig.json --watch --outDir lib --declarationDir lib --declaration --module commonjs",

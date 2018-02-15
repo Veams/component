@@ -7,8 +7,8 @@
   resolved "https://registry.yarnpkg.com/@types/jquery/-/jquery-3.3.0.tgz#6316ac20a1a13c5d521a2dc661befc7184f73f5b"
 
 "@veams/base@^1.0.0":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@veams/base/-/base-1.0.1.tgz#2e3175d4999935a0e1c796f9cb67d0715649879a"
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@veams/base/-/base-1.0.2.tgz#106e14edf99ccab97d18fc2dee1eacd482dbd6e3"
   dependencies:
     "@veams/helpers" "^1.2.1"
     deepmerge "^2.0.1"
