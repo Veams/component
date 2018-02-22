@@ -150,14 +150,14 @@ abstract class Component extends Base {
 	 *
 	 * @public
 	 */
-	abstract bindEvents();
+	bindEvents() {}
 
 	/**
 	 * Unbind events
 	 *
 	 * @public
 	 */
-	abstract unbindEvents();
+	unbindEvents() {}
 
 	/**
 	 * Pre-Render templates
