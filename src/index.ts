@@ -8,10 +8,8 @@
  * and a destroy behaviour.
  *
  * Keep in mind, that this class is a dependent of Veams.
- *
- * TODO: Make a native one which does not need any Veams specific stuff.
- *
- * @module VeamsComponent
+ **
+ * @module @veams/component
  * @author Sebastian Fitzner
  */
 
@@ -19,12 +17,13 @@
  * Imports
  */
 import Base, { BaseConfig } from '@veams/base';
+import { Collection } from './helpers/collection';
 import getStringValue from './helpers/get-string-value';
 import tplEngine from './helpers/template-engine';
-import { Collection } from './helpers/collection';
+import eventHandler from './helpers/event-handler';
 
 export interface ComponentConfig extends BaseConfig {
-	appInstance?: any; // @TODO: Check type
+	context?: any; // @TODO: Check type
 }
 
 export interface Subscriber {
@@ -42,6 +41,11 @@ function buildEvtId(evtKeyArr, fnName) {
 	return evtKeyArr.join('_') + '_' + fnName;
 }
 
+/**
+ * Hidden vars
+ */
+let eventElement = null;
+
 abstract class Component extends Base {
 	_events: {
 		[key: string]: string
@@ -53,8 +57,7 @@ abstract class Component extends Base {
 
 	__subscribers: Collection<Subscriber>;
 
-	private appInstance: any;
-	$el: JQuery;
+	private context: any;
 
 	/**
 	 * Constructor
@@ -67,19 +70,15 @@ abstract class Component extends Base {
 	 */
 	constructor(obj: ComponentConfig, options = {}) {
 		super(obj, options);
-		this.appInstance = obj.appInstance || window['Veams'];
 
-		if (!this.appInstance) {
-			throw new Error('VeamsComponent :: Please provide your app instance!');
+		this.context = obj.context || window['Veams'];
+
+		if (!this.context) {
+			throw new Error('@veams/component :: Please provide the context!');
 		}
 
-		if (!this.appInstance.$) {
-			console.info('VeamsComponent :: Please add a DOM handler like jQuery to the app instance!');
-		}
-
-		if (this.appInstance.$) {
-			this.$el = this.appInstance.$(obj.el);
-		}
+		// My event handling
+		eventElement = eventHandler(this.el);
 
 		this.initialize(obj, options);
 		this._create();
@@ -185,7 +184,7 @@ abstract class Component extends Base {
 	destroy() {
 		this.unregisterEvents();
 		this.unbindEvents();
-		this.$el.remove();
+		this.el.remove();
 	}
 
 	/**
@@ -195,12 +194,12 @@ abstract class Component extends Base {
 	 * @param {Object} data - Data which gets handled by the template.
 	 */
 	renderTemplate(tplName: string, data: object) {
-		if (!this.appInstance.templater) {
+		if (!this.context.templater) {
 			console.error(`
-				VeamsComponent :: It seems that you haven\'t added the VeamsTemplater plugin. In order to work with 'renderTemplate()' you need to add it!
+				@veams/component :: It seems that you haven\'t added the @veams/plugin-templater. In order to work with 'renderTemplate()' you need to add it!
 			`);
 		} else {
-			return this.appInstance.templater.render(tplName, data);
+			return this.context.templater.render(tplName, data);
 		}
 	}
 
@@ -267,28 +266,28 @@ abstract class Component extends Base {
 	 */
 	registerEvent(evtKey: string, fn: string, global = false) {
 		if (typeof evtKey !== 'string') {
-			console.error('VeamsComponent :: Your event is not a string!');
+			console.error('@veams/component :: Your event is not a string!');
 			return;
 		}
 
 		if (typeof fn !== 'string') {
-			console.error('VeamsComponent :: Your event handler function is not a string!');
+			console.error('@veams/component :: Your event handler function is not a string!');
 			return;
 		}
 
 		let evtKeyArr = evtKey.split(' ');
 		let arrlen = evtKeyArr.length;
-		let evtType = getStringValue.apply(this, [tplEngine(evtKeyArr[0]), this.appInstance]);
+		let evtType = getStringValue.apply(this, [tplEngine(evtKeyArr[0]), this.context]);
 		let bindFn = this[fn].bind(this);
 		let id = buildEvtId(evtKeyArr, fn);
 
 		if (arrlen > 2) {
-			throw new Error('It seems like you have more than two strings in your events object!');
+			throw new Error('@veams/component :: It seems like you have more than two strings in your events object!');
 		}
 
-		// Bind on this.$el
+		// Bind on this.el
 		if (arrlen === 1 && !global) {
-			this.$el.on(evtType, bindFn);
+			eventElement.on(evtType, bindFn);
 
 			this.addSubscriber({
 				type: 'event',
@@ -298,7 +297,7 @@ abstract class Component extends Base {
 			});
 
 		} else if (arrlen === 1 && global) {
-			this.appInstance.Vent.subscribe(evtType, bindFn);
+			this.context.Vent.subscribe(evtType, bindFn);
 
 			this.addSubscriber({
 				type: 'globalEvent',
@@ -309,7 +308,7 @@ abstract class Component extends Base {
 		} else {
 			let delegate = getStringValue.apply(this, [tplEngine(evtKeyArr[1])]);
 
-			this.$el.on(evtType, delegate, bindFn);
+			eventElement.on(evtType, delegate, bindFn);
 
 			this.addSubscriber({
 				type: 'delegatedEvent',
@@ -325,16 +324,16 @@ abstract class Component extends Base {
 	 * Delete all registered events.
 	 */
 	unregisterEvents() {
-		for (let key in this.addSubscriber) {
-			if (this.addSubscriber.hasOwnProperty(key)) {
-				let obj = this.addSubscriber[key];
+		for (let key in this._subscribers) {
+			if (this._subscribers.hasOwnProperty(key)) {
+				let obj = this._subscribers[key];
 
 				if (obj.type === 'globalEvent') {
-					this.appInstance.Vent.unsubscribe(obj.event, obj.handler);
+					this.context.Vent.unsubscribe(obj.event, obj.handler);
 				} else if (obj.type === 'delegatedEvent') {
-					this.$el.off(obj.event, obj.delegate, obj.handler);
+					eventElement.off(obj.event, obj.delegate, obj.handler);
 				} else {
-					this.$el.off(obj.event, obj.handler);
+					eventElement.off(obj.event, obj.handler);
 				}
 			}
 		}
@@ -343,7 +342,6 @@ abstract class Component extends Base {
 	/**
 	 * Unregister an event by using the saved subscribers and
 	 * a key/value pair.
-	 *
 	 *
 	 * @param {String} evtKey - Event key which contains event and additionally a delegated element.
 	 * @param {String} fn - Function defined as string which will be unbound to this.
@@ -360,15 +358,15 @@ abstract class Component extends Base {
 		let evtKeyArr = evtKey.split(' ');
 		let id = buildEvtId(evtKeyArr, fn);
 
-		if (this.addSubscriber[id]) {
-			let obj = this.addSubscriber[id];
+		if (this._subscribers[id]) {
+			let obj = this._subscribers[id];
 
 			if (obj.type === 'globalEvent') {
-				this.appInstance.Vent.unsubscribe(obj.event, obj.handler);
+				this.context.Vent.unsubscribe(obj.event, obj.handler);
 			} else if (obj.type === 'delegatedEvent') {
-				this.$el.off(obj.event, obj.delegate, obj.handler);
+				eventElement.off(obj.event, obj.delegate, obj.handler);
 			} else {
-				this.$el.off(obj.event, obj.handler);
+				eventElement.off(obj.event, obj.handler);
 			}
 		}
 	}
