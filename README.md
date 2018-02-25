@@ -22,7 +22,6 @@ npm install @veams/component --save
 yarn add @veams/component
 ```
 
-
 ## Usage
 
 ### Initial methods
@@ -32,11 +31,15 @@ yarn add @veams/component
 - you have to call `super(obj, options)` to merge default with markup options
 
 #### `initialize()`
-- called on init
-- useful for preparing your component
+- called in the constructor
+- useful for preparing your component, but cannot use any defined class property 
+
+#### `create()`
+- This function just executes other functions and will be executed by [`@veams/plugin-modules`](https://github.com/Veams/plugin-modules). 
+- When you want to use a component in another component, call the function after init. 
 
 #### `preRender()`
-- if needed templates can be prerendered here using `renderTemplate` (see section "Render templates")
+- if needed templates can be pre-rendered here using `renderTemplate` (see section "Render templates")
 
 #### `bindEvents()`
 - bind events manually here using `registerEvent` (see section "Events / Manual binding")
@@ -80,6 +83,19 @@ Example for overwriting default options with markup options:
 
 ---------------
 
+### Provided parameters 
+
+When the component gets initialized, it expects to get passed two parameters: 
+
+1. `obj` - Generic Object which contains
+    - `el` - Required: Node/element which is associated with it.
+    - `namespace` - Optional: Namespace which is associated with the module. 
+    - `options` - Optional: Options object.
+    - `context` - Optional: The context object is your custom Veams object.
+2. `options` - Optional: Markup Options which are read out by this plugin
+
+---------------
+
 ### Event Handling
 
 #### `subscribe`
@@ -98,7 +114,13 @@ get subscribe() {
 
 #### `events`
 
-Local events can be bound by using the getter `events`.
+Local events can be bound by using the getter `events`. 
+
+This package has its own event-handler process and is similar to `@veams/query`. 
+That means every event handled by a function can provides to the function two paramaters: 
+
+1. `e` - Native event object.
+2. `target` - Target on which you have clicked.  
 
 ##### Example 1 (without event delegation)
 
@@ -202,6 +224,8 @@ class Comparer extends Component {
 		};
 
 		super(obj, options);
+		
+		this.$el = $(this.el);
 	}
 
 	/** =================================================

@@ -7,8 +7,6 @@
  * rendering of templates
  * and a destroy behaviour.
  *
- * Keep in mind, that this class is a dependent of Veams.
- **
  * @module @veams/component
  * @author Sebastian Fitzner
  */
@@ -42,8 +40,10 @@ function buildEvtId(evtKeyArr, fnName) {
 }
 
 /**
- * Hidden vars
+ * Hidden variables
  */
+
+// Custom event handler element which will be used in `events()` and `subscribe`
 let eventElement = null;
 
 abstract class Component extends Base {
@@ -74,14 +74,12 @@ abstract class Component extends Base {
 		this.context = obj.context || window['Veams'];
 
 		if (!this.context) {
-			throw new Error('@veams/component :: Please provide the context!');
+			console.info('@veams/component :: There is no context defined! When you want to use @veams/plugin-vent or any other singleton shared by your Veams instance provide the Veams object as context!');
 		}
 
-		// My event handling
 		eventElement = eventHandler(this.el);
 
 		this.initialize(obj, options);
-		this._create();
 	}
 
 	// ----------------------------------------------------------
@@ -137,7 +135,7 @@ abstract class Component extends Base {
 	 *
 	 * @private
 	 */
-	_create() {
+	create() {
 		this.preRender();
 		this.registerEvents(this.events, false);
 		this.registerEvents(this.subscribe, true);
@@ -149,14 +147,16 @@ abstract class Component extends Base {
 	 *
 	 * @public
 	 */
-	bindEvents() {}
+	bindEvents() {
+	}
 
 	/**
 	 * Unbind events
 	 *
 	 * @public
 	 */
-	unbindEvents() {}
+	unbindEvents() {
+	}
 
 	/**
 	 * Pre-Render templates
@@ -297,6 +297,11 @@ abstract class Component extends Base {
 			});
 
 		} else if (arrlen === 1 && global) {
+			if (!this.context && !this.context.Vent) {
+				console.warn('@veams/component :: There is no context or the Vent object is missing. Subscribing to global events will not work without it!');
+				return;
+			}
+
 			this.context.Vent.subscribe(evtType, bindFn);
 
 			this.addSubscriber({
@@ -329,6 +334,10 @@ abstract class Component extends Base {
 				let obj = this._subscribers[key];
 
 				if (obj.type === 'globalEvent') {
+					if (!this.context && !this.context.Vent) {
+						console.warn('@veams/component :: There is no context or the Vent object is missing. Subscribing to global events will not work without it!');
+						return;
+					}
 					this.context.Vent.unsubscribe(obj.event, obj.handler);
 				} else if (obj.type === 'delegatedEvent') {
 					eventElement.off(obj.event, obj.delegate, obj.handler);
@@ -362,6 +371,10 @@ abstract class Component extends Base {
 			let obj = this._subscribers[id];
 
 			if (obj.type === 'globalEvent') {
+				if (!this.context && !this.context.Vent) {
+					console.warn('@veams/component :: There is no context or the Vent object is missing. Subscribing to global events will not work without it!');
+					return;
+				}
 				this.context.Vent.unsubscribe(obj.event, obj.handler);
 			} else if (obj.type === 'delegatedEvent') {
 				eventElement.off(obj.event, obj.delegate, obj.handler);
