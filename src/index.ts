@@ -128,7 +128,7 @@ abstract class Component extends Base {
 	// ----------------------------------------------------------
 	// STANDARD METHODS
 	// ----------------------------------------------------------
-	abstract initialize(...args);
+	initialize(...args) {}
 
 	/**
 	 * Private method to create all necessary elements and bindings.

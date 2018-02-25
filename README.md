@@ -26,13 +26,14 @@ yarn add @veams/component
 
 ### Initial methods
 
-#### `constructor(obj)`
+#### `constructor(obj, options)`
 - default options are defined here
 - you have to call `super(obj, options)` to merge default with markup options
 
-#### `initialize()`
+#### `initialize(...args)`
 - called in the constructor
-- useful for preparing your component, but cannot use any defined class property 
+- useful for preparing your component, but cannot use any defined class property
+- gets the object and markup options objects as parameters
 
 #### `create()`
 - This function just executes other functions and will be executed by [`@veams/plugin-modules`](https://github.com/Veams/plugin-modules). 
