@@ -47,17 +47,14 @@ function buildEvtId(evtKeyArr, fnName) {
 let eventElement = null;
 
 abstract class Component extends Base {
+	context: any;
 	_events: {
 		[key: string]: string
 	};
-
 	_subscribe: {
 		[key: string]: string
 	};
-
 	__subscribers: Collection<Subscriber>;
-
-	private context: any;
 
 	/**
 	 * Constructor
