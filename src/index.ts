@@ -55,6 +55,7 @@ abstract class Component extends Base {
 		[key: string]: string
 	};
 	__subscribers: Collection<Subscriber>;
+	private __eventElement: any; // TODO :: Create definition
 
 	/**
 	 * Constructor
@@ -69,12 +70,12 @@ abstract class Component extends Base {
 		super(obj, options);
 
 		this.context = obj.context || window['Veams'];
+		this.__eventElement = eventHandler(this.el);
 
 		if (!this.context) {
 			console.info('@veams/component :: There is no context defined! When you want to use @veams/plugin-vent or any other singleton shared by your Veams instance provide the Veams object as context!');
 		}
 
-		eventElement = eventHandler(this.el);
 
 		this.initialize(obj, options);
 	}
@@ -284,7 +285,7 @@ abstract class Component extends Base {
 
 		// Bind on this.el
 		if (arrlen === 1 && !global) {
-			eventElement.on(evtType, bindFn);
+			this.__eventElement.on(evtType, bindFn);
 
 			this.addSubscriber({
 				type: 'event',
@@ -310,7 +311,7 @@ abstract class Component extends Base {
 		} else {
 			let delegate = getStringValue.apply(this, [tplEngine(evtKeyArr[1])]);
 
-			eventElement.on(evtType, delegate, bindFn);
+			this.__eventElement.on(evtType, delegate, bindFn);
 
 			this.addSubscriber({
 				type: 'delegatedEvent',
@@ -337,9 +338,9 @@ abstract class Component extends Base {
 					}
 					this.context.Vent.unsubscribe(obj.event, obj.handler);
 				} else if (obj.type === 'delegatedEvent') {
-					eventElement.off(obj.event, obj.delegate, obj.handler);
+					this.__eventElement.off(obj.event, obj.delegate, obj.handler);
 				} else {
-					eventElement.off(obj.event, obj.handler);
+					this.__eventElement.off(obj.event, obj.handler);
 				}
 			}
 		}
@@ -374,9 +375,9 @@ abstract class Component extends Base {
 				}
 				this.context.Vent.unsubscribe(obj.event, obj.handler);
 			} else if (obj.type === 'delegatedEvent') {
-				eventElement.off(obj.event, obj.delegate, obj.handler);
+				this.__eventElement.off(obj.event, obj.delegate, obj.handler);
 			} else {
-				eventElement.off(obj.event, obj.handler);
+				this.__eventElement.off(obj.event, obj.handler);
 			}
 		}
 	}
