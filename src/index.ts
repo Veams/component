@@ -126,7 +126,8 @@ abstract class Component extends Base {
 	// ----------------------------------------------------------
 	// STANDARD METHODS
 	// ----------------------------------------------------------
-	initialize(...args) {}
+	initialize(...args) {
+	}
 
 	/**
 	 * Private method to create all necessary elements and bindings.
@@ -209,29 +210,25 @@ abstract class Component extends Base {
 	/**
 	 * This method will be executed after initialise
 	 */
-	public willMount() {
-		return this;
+	public willMount(): void {
 	};
 
 	/**
 	 * This method will be executed before unregistering events
 	 */
-	public willUnmount() {
-		return this;
+	public willUnmount(): void {
 	};
 
 	/**
 	 * This method will be executed after render
 	 */
-	public didMount() {
-		return this;
+	public didMount(): void {
 	};
 
 	/**
 	 * This method will be executed after unregistering events
 	 */
-	public didUnmount() {
-		return this;
+	public didUnmount(): void {
 	};
 
 	// ----------------------------------------------------------
