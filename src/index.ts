@@ -209,22 +209,30 @@ abstract class Component extends Base {
 	/**
 	 * This method will be executed after initialise
 	 */
-	abstract willMount();
+	public willMount() {
+		return this;
+	};
 
 	/**
 	 * This method will be executed before unregistering events
 	 */
-	abstract willUnmount();
+	public willUnmount() {
+		return this;
+	};
 
 	/**
 	 * This method will be executed after render
 	 */
-	abstract didMount();
+	public didMount() {
+		return this;
+	};
 
 	/**
 	 * This method will be executed after unregistering events
 	 */
-	abstract didUnmount();
+	public didUnmount() {
+		return this;
+	};
 
 	// ----------------------------------------------------------
 	// EVENTS METHODS
