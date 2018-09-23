@@ -1,12 +1,19 @@
+[//]: # ({{#wrapWith "content-section"}})
+
+[//]: #     ({{#wrapWith "grid-row"}})
+[//]: #         ({{#wrapWith "grid-col" colClasses="is-col-mobile-l-8"}})
+
 # Component (@veams/component)
 
-**Component Class for Components which can be used in Veams projects.**
+**Component Class for Components which can be used in static page projects in `VEAMS`.**
 
+------------------------
 
 ## Features
 
 The class provides a base system to build components. It merges options, bind and unbind events without worrying about that, subscribe to global events and renders templates with data.
 
+------------------------
 
 ## Installation
 
@@ -21,6 +28,8 @@ npm install @veams/component --save
 ``` bash
 yarn add @veams/component
 ```
+
+------------------------
 
 ## Usage
 
@@ -100,7 +109,7 @@ When the component gets initialized, it expects to get passed two parameters:
 ### Event Handling
 
 #### `subscribe`
-The `VeamsComponent` can subscribe to global events using the getter `subscribe`.
+The Component Class can subscribe to global events using the getter `subscribe`.
 Global events can be triggered with `Veams.Vent.trigger('eventName')`.
 
 Example for global event subscription:
@@ -174,7 +183,7 @@ bindEvents() {
 
 ### Render templates with `renderTemplate()`
 
-Rendering templates with Veams is pretty easy. You only have to specify the names of templates you want to use in the options of your component and then make a call to the `renderTemplate` function, passing the template name and the data as parameters.
+Rendering templates with `VEAMS` is pretty easy. You only have to specify the names of templates you want to use in the options of your component and then make a call to the `renderTemplate` function, passing the template name and the data as parameters.
 
 ``` js
 render() {
@@ -302,3 +311,8 @@ class Comparer extends Component {
 
 export default Comparer;
 ```
+
+[//]: #         ({{/wrapWith}})
+[//]: #     ({{/wrapWith}})
+
+[//]: # ({{/wrapWith}})
