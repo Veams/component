@@ -32,6 +32,13 @@ export interface Subscriber {
 	handler: any;
 }
 
+const DEFAULT_LIFECYCLES = {
+	create: true,
+	willMount: true,
+	didMount: true,
+	render: false
+};
+
 /**
  * Custom Functions
  */
@@ -75,7 +82,6 @@ abstract class Component extends Base {
 		if (!this.context) {
 			console.info('@veams/component :: There is no context defined! When you want to use @veams/plugin-vent or any other singleton shared by your Veams instance provide the Veams object as context!');
 		}
-
 
 		this.initialize(obj, options);
 	}
@@ -388,4 +394,30 @@ abstract class Component extends Base {
 	}
 }
 
+function autocreate(lifecycles) {
+	const mergedLifeCycles = {...DEFAULT_LIFECYCLES, ...lifecycles};
+
+	return function creatInstance(instance: Component) {
+		if (mergedLifeCycles.create) {
+			instance.create();
+		}
+
+		if (mergedLifeCycles.willMount) {
+			instance.willMount();
+		}
+
+		if (mergedLifeCycles.didMount) {
+			instance.didMount();
+		}
+
+		if (mergedLifeCycles.render) {
+			instance.render();
+		}
+	}
+}
+
 export default Component;
+
+export {
+	autocreate
+}
