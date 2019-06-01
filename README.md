@@ -117,7 +117,7 @@ Example for global event subscription:
 ``` js
 get subscribe() {
 	return {
-		'{{Veams.EVENTS.resize}}': 'onResize'
+		'\{{Veams.EVENTS.resize}}': 'onResize'
 	};
 }
 ```
@@ -149,7 +149,7 @@ In this case the event listener is bound to `this.el` and executed as soon as th
 ``` js
 get events() {
 	return {
-		'click {{this.options.specialBtn}}': 'onClick'
+		'click \{{this.options.specialBtn}}': 'onClick'
 	};
 }
 ```
@@ -169,10 +169,10 @@ bindEvents() {
 	if (condition) {
 	
 		// register global event
-		this.registerEvent('{{this.options.globalEvent}}', 'eventHandler', true);
+		this.registerEvent('\{{this.options.globalEvent}}', 'eventHandler', true);
 	
 		// register local event with event delegation
-		this.registerEvent('{{Veams.EVENTS.keydown}} {{this.options.someSubComponent}}', 'onKeydown');
+		this.registerEvent('\{{Veams.EVENTS.keydown}} \{{this.options.someSubComponent}}', 'onKeydown');
 	}
 	
 	...
@@ -194,6 +194,26 @@ render() {
 	// append output to current element
 	this.$el.append(tmpl);
 }
+```
+
+------------------
+
+### Auto Creation
+
+You are able to auto create your component by using the provided method `autocreate()`. The method returns the instance and executes all important lifecycle methods for you. 
+
+``` js
+import Component, { autocreate } from '@veams/component';
+import Veams from './app.veams'
+import Counter from './counter';
+
+const counter = autocreate()(new Counter({
+	el: document.getElementById('counter')
+}));
+
+Veams.onDOMReady(() => {
+	counter.render();
+});
 ```
 
 ------------------

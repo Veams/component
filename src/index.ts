@@ -413,6 +413,8 @@ function autocreate(lifecycles) {
 		if (mergedLifeCycles.render) {
 			instance.render();
 		}
+
+		return instance;
 	}
 }
 
